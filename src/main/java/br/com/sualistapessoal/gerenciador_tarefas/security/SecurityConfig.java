@@ -8,6 +8,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -40,20 +41,26 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable())
+                .csrf(AbstractHttpConfigurer::disable) // Desabilita CSRF
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
-                        // Permite acesso a todos os arquivos estáticos e de mídia
-                        .requestMatchers("/", "/index.html", "/style.css", "/script.js", "/manifest.json", "/sw.js").permitAll()
-                        // CORREÇÃO: Garante que todos os arquivos dentro de /icons/ e /sounds/ sejam permitidos
-                        .requestMatchers("/icons/**", "/sounds/**").permitAll()
-                        // Permite acesso aos endpoints públicos de login e registro
+                        // CORREÇÃO DEFINITIVA: Libera todos os recursos estáticos de uma vez
+                        .requestMatchers(
+                                "/",
+                                "/index.html",
+                                "/favicon.ico",
+                                "/*.js",
+                                "/*.css",
+                                "/*.json",
+                                "/icons/**",  // Permite acesso a todos os arquivos na pasta /icons/
+                                "/sounds/**" // Permite acesso a todos os arquivos na pasta /sounds/
+                        ).permitAll()
+                        // Libera os endpoints de autenticação
                         .requestMatchers("/api/user/login", "/api/user/register").permitAll()
-                        // Todas as outras requisições precisam de autenticação
+                        // Exige autenticação para todas as outras requisições
                         .anyRequest().authenticated()
                 )
-                // Adiciona o filtro JWT antes do filtro padrão de autenticação
                 .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
@@ -68,7 +75,7 @@ public class SecurityConfig {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
-        config.addAllowedOriginPattern("*"); // Permite qualquer origem
+        config.addAllowedOriginPattern("*");
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
         source.registerCorsConfiguration("/**", config);
