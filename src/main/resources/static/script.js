@@ -432,9 +432,8 @@ document.addEventListener('DOMContentLoaded', () => {
             await apiRequest(endpoint, method, taskData, true);
             showToast(id ? "Tarefa atualizada com sucesso!" : "Tarefa adicionada com sucesso!");
             
-            if (!id) { // Apenas se for uma NOVA tarefa
+            if (!id) { 
                 playSound(addSound, 0.5);
-                // CORREÇÃO: Incrementa o total de tarefas localmente
                 const currentTotal = parseInt(localStorage.getItem('totalTasks') || '0', 10);
                 const newTotal = currentTotal + 1;
                 localStorage.setItem('totalTasks', newTotal);
@@ -994,7 +993,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     function startClock(timezone) {
-        if (clockInterval) clearInterval(clockInterval).
+        if (clockInterval) clearInterval(clockInterval);
     
         function updateClock() {
             const now = new Date();
@@ -1018,7 +1017,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
             currentTimeEl.textContent = timeString;
             currentDateEl.textContent = new Intl.DateTimeFormat('pt-BR', dateOptions).format(now).replace(/(^|\s)\S/g, l => l.toUpperCase());
-
         }
     
         updateClock();
@@ -1068,6 +1066,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- INICIALIZAÇÃO ---
     async function initializeApp() {
+        loader.classList.remove('hidden'); // Mostra o loader
         const savedTheme = localStorage.getItem('theme') || 'dark';
         setTheme(savedTheme);
         const savedMuteState = localStorage.getItem('isMuted') === 'true';
@@ -1094,7 +1093,7 @@ document.addEventListener('DOMContentLoaded', () => {
             console.error("Erro durante a inicialização:", error);
             showToast("Ocorreu um erro ao iniciar o aplicativo.", true);
         } finally {
-            loader.classList.add('hidden');
+            loader.classList.add('hidden'); // Esconde o loader
         }
     }
 

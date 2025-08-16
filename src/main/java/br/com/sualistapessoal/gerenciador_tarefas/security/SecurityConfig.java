@@ -21,11 +21,9 @@ import org.springframework.web.filter.CorsFilter;
 @EnableWebSecurity
 public class SecurityConfig {
 
-    // Injeção do nosso filtro JWT personalizado
     @Autowired
     private JwtTokenFilter jwtTokenFilter;
 
-    // Injeção do nosso serviço de detalhes do usuário
     @Autowired
     private UserDetailsServiceImpl userDetailsService;
 
@@ -48,13 +46,14 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorize -> authorize
                         // Permite acesso a todos os arquivos estáticos e de mídia
                         .requestMatchers("/", "/index.html", "/style.css", "/script.js", "/manifest.json", "/sw.js").permitAll()
+                        // CORREÇÃO: Garante que todos os arquivos dentro de /icons/ e /sounds/ sejam permitidos
                         .requestMatchers("/icons/**", "/sounds/**").permitAll()
                         // Permite acesso aos endpoints públicos de login e registro
                         .requestMatchers("/api/user/login", "/api/user/register").permitAll()
                         // Todas as outras requisições precisam de autenticação
                         .anyRequest().authenticated()
                 )
-                // LINHA CRÍTICA ADICIONADA: Adiciona o filtro JWT antes do filtro padrão de autenticação
+                // Adiciona o filtro JWT antes do filtro padrão de autenticação
                 .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
@@ -69,7 +68,7 @@ public class SecurityConfig {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
-        config.addAllowedOriginPattern("*");
+        config.addAllowedOriginPattern("*"); // Permite qualquer origem
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
         source.registerCorsConfiguration("/**", config);
