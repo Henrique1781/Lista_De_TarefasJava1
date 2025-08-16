@@ -429,17 +429,16 @@ document.addEventListener('DOMContentLoaded', () => {
         const method = id ? 'PUT' : 'POST';
 
         try {
-            const savedTask = await apiRequest(endpoint, method, taskData, true);
+            await apiRequest(endpoint, method, taskData, true);
             showToast(id ? "Tarefa atualizada com sucesso!" : "Tarefa adicionada com sucesso!");
             
-            if (!id) {
+            if (!id) { // Apenas se for uma NOVA tarefa
                 playSound(addSound, 0.5);
-                // Atualiza o total de tarefas diretamente do backend ou localmente
-                const currentUser = await apiRequest('/api/user/profile/details'); // endpoint hipotético
-                if (currentUser && currentUser.totalTasksCreated) {
-                     localStorage.setItem('totalTasks', currentUser.totalTasksCreated);
-                     userTotalTasksSpan.textContent = currentUser.totalTasksCreated;
-                }
+                // CORREÇÃO: Incrementa o total de tarefas localmente
+                const currentTotal = parseInt(localStorage.getItem('totalTasks') || '0', 10);
+                const newTotal = currentTotal + 1;
+                localStorage.setItem('totalTasks', newTotal);
+                userTotalTasksSpan.textContent = newTotal;
             }
 
             closeModal();
@@ -460,9 +459,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const dateValue = document.getElementById('date').value;
         const today = new Date(new Date().getTime() - (new Date().getTimezoneOffset() * 60000)).toISOString().split('T')[0];
     
-        // Se a data selecionada for hoje, ajuste a hora de início
         if (dateValue === today) {
-            // Arredonda para a próxima meia hora
             if (startMinute < 30) {
                 startMinute = 30;
             } else {
@@ -470,12 +467,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 startHour += 1;
             }
         } else {
-            // Para datas futuras, começa do início do dia
             startHour = 0;
             startMinute = 0;
         }
     
-        // Gera as opções de 30 em 30 minutos
         for (let h = startHour; h < 24; h++) {
             for (let m = (h === startHour ? startMinute : 0); m < 60; m += 30) {
                 const hourString = h.toString().padStart(2, '0');
@@ -999,7 +994,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     function startClock(timezone) {
-        if (clockInterval) clearInterval(clockInterval);
+        if (clockInterval) clearInterval(clockInterval).
     
         function updateClock() {
             const now = new Date();

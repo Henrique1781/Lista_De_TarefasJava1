@@ -1,4 +1,4 @@
-const CACHE_NAME = 'minha-rotina-cache-v3'; // Versão do cache alterada para forçar a atualização
+const CACHE_NAME = 'minha-rotina-cache-v4'; // Versão do cache alterada para forçar a atualização
 const urlsToCache = [
   '/',
   '/index.html',
@@ -17,11 +17,9 @@ self.addEventListener('install', event => {
     caches.open(CACHE_NAME)
       .then(cache => {
         console.log('Service Worker: Cache aberto e arquivos adicionados.');
-        // Usar addAll para garantir que todos os recursos essenciais sejam cacheados.
-        // Se um falhar, a instalação inteira falha.
         return cache.addAll(urlsToCache);
       })
-      .then(() => self.skipWaiting()) // Força o novo Service Worker a ativar-se imediatamente
+      .then(() => self.skipWaiting())
   );
 });
 
@@ -31,24 +29,21 @@ self.addEventListener('activate', event => {
     caches.keys().then(cacheNames => {
       return Promise.all(
         cacheNames.map(cacheName => {
-          // Apaga caches antigos que não correspondem ao CACHE_NAME atual
           if (cacheName !== CACHE_NAME) {
             console.log('Service Worker: Limpando cache antigo:', cacheName);
             return caches.delete(cacheName);
           }
         })
       );
-    }).then(() => self.clients.claim()) // Torna-se o controlador de todas as abas abertas
+    }).then(() => self.clients.claim())
   );
 });
 
 // Evento de Fetch: Intercepta pedidos de rede para funcionamento offline
 self.addEventListener('fetch', event => {
-  // Estratégia: Cache first, caindo para a rede se não encontrar no cache.
   event.respondWith(
     caches.match(event.request)
       .then(response => {
-        // Retorna a resposta do cache se encontrada, senão busca na rede
         return response || fetch(event.request);
       })
   );
@@ -71,11 +66,9 @@ self.addEventListener('notificationclick', event => {
   event.notification.close();
   event.waitUntil(
     clients.matchAll({ type: 'window', includeUncontrolled: true }).then(clientList => {
-      // Se a aplicação já estiver aberta, foca nela
       if (clientList.length > 0) {
         return clientList[0].focus();
       }
-      // Se não, abre uma nova janela
       return clients.openWindow('/');
     })
   );
