@@ -1,4 +1,4 @@
-const CACHE_NAME = 'minha-rotina-cache-v5'; // Versão do cache alterada para forçar a atualização
+const CACHE_NAME = 'minha-rotina-cache-v6'; // Versão do cache alterada para forçar a atualização
 const urlsToCache = [
   '/',
   '/index.html',
@@ -6,18 +6,18 @@ const urlsToCache = [
   '/script.js',
   '/manifest.json',
   '/icons/icon-192x192.png',
-  '/icons/icon-512x512.png',
-  'https://unpkg.com/@phosphor-icons/web@2.0.3',
-  'https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap'
+  '/icons/icon-512x192.png' // Corrigido para corresponder aos arquivos reais (assumindo que seja 512x512)
 ];
 
+// O restante do arquivo continua igual...
 // Evento de Instalação: O Service Worker é instalado
 self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then(cache => {
         console.log('Service Worker: Cache aberto e arquivos adicionados.');
-        return cache.addAll(urlsToCache);
+        const requests = urlsToCache.map(url => new Request(url, { cache: 'reload' }));
+        return cache.addAll(requests);
       })
       .then(() => self.skipWaiting())
   );

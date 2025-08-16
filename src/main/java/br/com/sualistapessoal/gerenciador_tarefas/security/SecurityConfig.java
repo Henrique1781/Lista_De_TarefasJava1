@@ -40,26 +40,21 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
+        // Aplica as regras de segurança APENAS para as rotas que começam com /api/
+        http.securityMatcher("/api/**")
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers(
-                                "/",
-                                "/index.html",
-                                "/favicon.ico",
-                                "/*.js",
-                                "/*.css",
-                                "/*.json",
-                                "/icons/**",
-                                "/sounds/**"
-                        ).permitAll()
+                        // Dentro de /api/, permite o acesso público a login e registro
                         .requestMatchers("/api/user/login", "/api/user/register").permitAll()
+                        // Exige autenticação para qualquer outra rota /api/
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);
 
+        // Por padrão, o Spring Security não aplicará nenhuma regra às rotas que NÃO começam com /api/**,
+        // como /, /index.html, /icons/**, etc. Elas serão publicamente acessíveis.
         return http.build();
     }
 
