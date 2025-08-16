@@ -1,4 +1,4 @@
-const CACHE_NAME = 'minha-rotina-cache-v4'; // Versão do cache alterada para forçar a atualização
+const CACHE_NAME = 'minha-rotina-cache-v5'; // Versão do cache alterada para forçar a atualização
 const urlsToCache = [
   '/',
   '/index.html',

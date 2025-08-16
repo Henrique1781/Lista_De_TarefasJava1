@@ -41,11 +41,10 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(AbstractHttpConfigurer::disable) // Desabilita CSRF
+                .csrf(AbstractHttpConfigurer::disable)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
-                        // CORREÇÃO DEFINITIVA: Libera todos os recursos estáticos de uma vez
                         .requestMatchers(
                                 "/",
                                 "/index.html",
@@ -53,12 +52,10 @@ public class SecurityConfig {
                                 "/*.js",
                                 "/*.css",
                                 "/*.json",
-                                "/icons/**",  // Permite acesso a todos os arquivos na pasta /icons/
-                                "/sounds/**" // Permite acesso a todos os arquivos na pasta /sounds/
+                                "/icons/**",
+                                "/sounds/**"
                         ).permitAll()
-                        // Libera os endpoints de autenticação
                         .requestMatchers("/api/user/login", "/api/user/register").permitAll()
-                        // Exige autenticação para todas as outras requisições
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);
