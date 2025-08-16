@@ -1,4 +1,4 @@
-const CACHE_NAME = 'minha-rotina-cache-v6'; // Versão do cache alterada para forçar a atualização
+const CACHE_NAME = 'minha-rotina-cache-v7'; // Versão do cache alterada para forçar a atualização
 const urlsToCache = [
   '/',
   '/index.html',
@@ -6,16 +6,18 @@ const urlsToCache = [
   '/script.js',
   '/manifest.json',
   '/icons/icon-192x192.png',
-  '/icons/icon-512x192.png' // Corrigido para corresponder aos arquivos reais (assumindo que seja 512x512)
+  '/icons/icon-512x512.png', // CORRIGIDO: O nome do arquivo agora está correto
+  'https://unpkg.com/@phosphor-icons/web@2.0.3',
+  'https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap'
 ];
 
 // O restante do arquivo continua igual...
-// Evento de Instalação: O Service Worker é instalado
 self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then(cache => {
         console.log('Service Worker: Cache aberto e arquivos adicionados.');
+        // Força o navegador a buscar os arquivos da rede em vez de usar o cache http
         const requests = urlsToCache.map(url => new Request(url, { cache: 'reload' }));
         return cache.addAll(requests);
       })
@@ -23,7 +25,6 @@ self.addEventListener('install', event => {
   );
 });
 
-// Evento de Ativação: O Service Worker começa a controlar a página
 self.addEventListener('activate', event => {
   event.waitUntil(
     caches.keys().then(cacheNames => {
@@ -39,7 +40,6 @@ self.addEventListener('activate', event => {
   );
 });
 
-// Evento de Fetch: Intercepta pedidos de rede para funcionamento offline
 self.addEventListener('fetch', event => {
   event.respondWith(
     caches.match(event.request)
@@ -49,7 +49,6 @@ self.addEventListener('fetch', event => {
   );
 });
 
-// Evento de Push: Essencial para notificações em segundo plano
 self.addEventListener('push', event => {
   const data = event.data ? event.data.json() : {};
   const title = data.title || 'Minha Rotina';
@@ -61,7 +60,6 @@ self.addEventListener('push', event => {
   event.waitUntil(self.registration.showNotification(title, options));
 });
 
-// Evento de Clique na Notificação: Define o que acontece quando o usuário clica na notificação
 self.addEventListener('notificationclick', event => {
   event.notification.close();
   event.waitUntil(
