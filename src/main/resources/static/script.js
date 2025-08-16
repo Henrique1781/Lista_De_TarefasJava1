@@ -175,11 +175,11 @@ document.addEventListener('DOMContentLoaded', () => {
             (now.getTime() - new Date(`${task.date}T${task.time}`).getTime()) > fiveMinutesInMillis
         ).length;
 
-        const pendingCount = allTasks.length - completedCount - overdueCount;
+        const pendingCount = allTasks.length - completedCount;
 
         totalTasksStat.textContent = allTasks.length;
         completedTasksStat.textContent = completedCount;
-        pendingTasksStat.textContent = pendingCount >= 0 ? pendingCount : 0;
+        pendingTasksStat.textContent = pendingCount;
         overdueTasksStat.textContent = overdueCount;
     }
 
@@ -225,7 +225,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (filteredPendingTasks.length > 0) {
             filteredPendingTasks.forEach(task => taskList.appendChild(createTaskElement(task)));
-        } else if (allTasks.length > 0) {
+        } else if (allTasks.length > 0 && currentFilter !== 'all') {
             taskList.innerHTML = `<div id="no-tasks-message" class=""><i class="ph-light ph-files"></i><p>Nenhuma tarefa corresponde aos filtros.</p></div>`;
         }
 
@@ -278,10 +278,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 ${task.description ? `<p class="task-description">${task.description.replace(/\n/g, '<br>')}</p>` : ''}
             </div>
             <div class="task-actions-menu">
-                <button class="menu-btn"><i class="ph-bold ph-dots-three-vertical"></i></button>
+                <button type="button" class="menu-btn"><i class="ph-bold ph-dots-three-vertical"></i></button>
                 <div class="dropdown-menu hidden">
-                    <button class="edit-btn"><i class="ph ph-pencil-simple"></i> Editar</button>
-                    <button class="delete-btn"><i class="ph ph-trash"></i> Excluir</button>
+                    <button type="button" class="edit-btn"><i class="ph ph-pencil-simple"></i> Editar</button>
+                    <button type="button" class="delete-btn"><i class="ph ph-trash"></i> Excluir</button>
                 </div>
             </div>
         `;
@@ -429,15 +429,17 @@ document.addEventListener('DOMContentLoaded', () => {
         const method = id ? 'PUT' : 'POST';
 
         try {
-            await apiRequest(endpoint, method, taskData, true);
+            const savedTask = await apiRequest(endpoint, method, taskData, true);
             showToast(id ? "Tarefa atualizada com sucesso!" : "Tarefa adicionada com sucesso!");
             
             if (!id) {
                 playSound(addSound, 0.5);
-                const currentTotal = parseInt(localStorage.getItem('totalTasks') || '0', 10);
-                const newTotal = currentTotal + 1;
-                localStorage.setItem('totalTasks', newTotal);
-                userTotalTasksSpan.textContent = newTotal;
+                // Atualiza o total de tarefas diretamente do backend ou localmente
+                const currentUser = await apiRequest('/api/user/profile/details'); // endpoint hipotético
+                if (currentUser && currentUser.totalTasksCreated) {
+                     localStorage.setItem('totalTasks', currentUser.totalTasksCreated);
+                     userTotalTasksSpan.textContent = currentUser.totalTasksCreated;
+                }
             }
 
             closeModal();

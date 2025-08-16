@@ -18,7 +18,7 @@
         <div class="spinner"></div>
     </div>
 
-    <button id="install-app-btn" class="install-btn hidden">
+    <button type="button" id="install-app-btn" class="install-btn hidden">
         <i class="ph ph-download-simple"></i>
         <span>Instalar App</span>
     </button>
@@ -31,16 +31,16 @@
                  <h1>Minha Rotina</h1>
             </div>
             <div class="header-right">
-                 <button id="theme-toggle-btn" class="theme-btn">
+                 <button type="button" id="theme-toggle-btn" class="theme-btn">
                     <i class="ph-fill ph-moon"></i>
                 </button>
-                <button id="mute-toggle-btn" class="theme-btn">
+                <button type="button" id="mute-toggle-btn" class="theme-btn">
                     <i class="ph-fill ph-speaker-high"></i>
                 </button>
                 <div class="profile-icon" id="profile-icon-btn">
                     <i class="ph-fill ph-user"></i>
                 </div>
-                 <button id="logout-btn" class="hidden">Sair</button>
+                 <button type="button" id="logout-btn" class="hidden">Sair</button>
             </div>
         </header>
 
@@ -90,10 +90,10 @@
         </div>
 
         <div class="filter-controls">
-            <button class="filter-btn active" data-filter="all">Todas</button>
-            <button class="filter-btn" data-filter="today">Hoje</button>
-            <button class="filter-btn" data-filter="upcoming">Próximos</button>
-            <button class="filter-btn" data-filter="routines">Rotinas</button>
+            <button type="button" class="filter-btn active" data-filter="all">Todas</button>
+            <button type="button" class="filter-btn" data-filter="today">Hoje</button>
+            <button type="button" class="filter-btn" data-filter="upcoming">Próximos</button>
+            <button type="button" class="filter-btn" data-filter="routines">Rotinas</button>
         </div>
 
         <div id="category-filter-controls" class="filter-controls"></div>
@@ -111,11 +111,11 @@
         </div>
     </div>
 
-    <button class="fab" id="add-task-btn"><i class="ph-bold ph-plus"></i></button>
+    <button type="button" class="fab" id="add-task-btn"><i class="ph-bold ph-plus"></i></button>
 
     <div id="task-modal" class="modal hidden">
         <div class="modal-content">
-            <button class="close-btn" id="close-modal-btn">&times;</button>
+            <button type="button" class="close-btn" id="close-modal-btn">&times;</button>
             <h2 id="modal-title">Nova Tarefa</h2>
             <form id="task-form">
                 <input type="hidden" id="task-id">
@@ -166,7 +166,7 @@
 
     <div id="user-info-modal" class="modal hidden">
         <div class="modal-content">
-            <button class="close-btn" id="close-user-modal-btn">&times;</button>
+            <button type="button" class="close-btn" id="close-user-modal-btn">&times;</button>
             <h2 id="user-modal-title">Suas Informações</h2>
             <form id="user-info-form">
                 <div class="profile-pic-uploader">
@@ -215,8 +215,8 @@
             <h2 id="confirm-modal-title">Confirmar Ação</h2>
             <p id="confirm-modal-text">Você tem certeza?</p>
             <div class="confirm-modal-actions">
-                <button id="confirm-modal-cancel-btn" class="btn-secondary">Cancelar</button>
-                <button id="confirm-modal-confirm-btn" class="btn-danger">Confirmar</button>
+                <button type="button" id="confirm-modal-cancel-btn" class="btn-secondary">Cancelar</button>
+                <button type="button" id="confirm-modal-confirm-btn" class="btn-danger">Confirmar</button>
             </div>
         </div>
     </div>
